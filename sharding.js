@@ -28,3 +28,41 @@ md config3
 sudo mongod --configsvr --dbpath /data/config1 --port 2011 --replSet rs0
 sudo mongod --configsvr --dbpath /data/config3 --port 2013 --replSet rs0
 sudo mongod --configsvr --dbpath /data/config2 --port 2012 --replSet rs0
+
+
+//Run from any config server
+rs.initiate(
+  {
+    _id: "rs0",
+    configsvr: true,
+    members: [
+      { _id : 0, host : "localhost:2011" },
+      { _id : 1, host : "localhost:2012" },
+      { _id : 2, host : "localhost:2013" }
+    ]
+  }
+)
+
+//New Cmd
+mongos --configdb "rs0/localhost:2011,localhost:2012,localhost:2013" --fork --logpath log.mongos0 --port 27200
+
+//Connection to mongos
+mongo --port 27200
+
+
+//Add shards
+sh.addShard("localhost:2001")
+sh.addShard("localhost:2002")
+sh.addShard("localhost:2003")
+
+
+show dbs
+use config
+show collections
+db.shards.find()
+
+
+
+use mongoMart1
+
+sh.enableSharding("mongoMart1")
