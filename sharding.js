@@ -66,3 +66,37 @@ db.shards.find()
 use mongoMart1
 
 sh.enableSharding("mongoMart1")
+
+
+
+//enable on collection level
+sh.shardCollection("mongoMart1.shop1",{"_id":"hashed"})
+for (var i =1;i<=20;i++)db.shop1.insert({x:i})
+
+//remove shard
+use admin
+db.runCommand({removeShard: "shard0000"})
+
+
+
+////Adding replica in shard
+
+sudo mongod --port 2001 --dbpath Desktop/Replica/rs1 --replSet --shardA --oplogSize 128
+sudo mongod --port 2002 --dbpath Desktop/Replica/rs2 --replSet --shardA --oplogSize 128
+sudo mongod --port 2003 --dbpath Desktop/Replica/rs3 --replSet --shardA --oplogSize 128
+
+sudo mongod --port 2004 --dbpath Desktop/Replica/rs1 --replSet --shardB --oplogSize 128
+sudo mongod --port 2005 --dbpath Desktop/Replica/rs2 --replSet --shardB --oplogSize 128
+sudo mongod --port 2006 --dbpath Desktop/Replica/rs3 --replSet --shardB --oplogSize 128
+
+sudo mongod --port 2007 --dbpath Desktop/Replica/rs1 --replSet --shardC --oplogSize 128
+sudo mongod --port 2008 --dbpath Desktop/Replica/rs2 --replSet --shardC --oplogSize 128
+sudo mongod --port 2009 --dbpath Desktop/Replica/rs3 --replSet --shardC --oplogSize 128
+
+
+sudo mongod --shardsvr --dbpath Desktop/shard/shard1 --replSet shardA --port 3001
+
+sudo mongod --shardsvr --dbpath Desktop/shard/shard2 --replSet shardB --port 3002 
+
+sudo mongod --shardsvr --dbpath Desktop/shard/shard3  --replSet shardC -port 3003
+
