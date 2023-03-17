@@ -100,3 +100,19 @@ sudo mongod --shardsvr --dbpath Desktop/shard/shard2 --replSet shardB --port 300
 
 sudo mongod --shardsvr --dbpath Desktop/shard/shard3  --replSet shardC -port 3003
 
+
+////////////////////////////////
+mongoexport --db  nodeevng --collection first  --type=csv  --fields _id,name,class   --out  Downloads/first.csv
+
+
+mongoexport --host="localhost:27017" --collection=first --db=nodeevng --out=first.json
+
+
+mongoimport --db=users --collection=contacts --file=first.json
+
+mongodump
+mongodump -d=test -c=records -q='{ "a": { "$gte": 3 }, "date": { "$lt": { "$date": "2016-01-01T00:00:00.000Z" } } }'
+
+mongorestore  dump/
+
+bsondump --outFile=collection.json collection.bson
